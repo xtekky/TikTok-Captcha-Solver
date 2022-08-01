@@ -1,3 +1,5 @@
+# 100€ t.me/xtekky
+
 import requests
 import base64
 import time
