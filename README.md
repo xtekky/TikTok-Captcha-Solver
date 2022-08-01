@@ -1,2 +1,1 @@
-# TikTok-Captcha-Solver
-TikTok Captcha Solver, full requests
+dm https://t.me/xtekky for demo, 100€
