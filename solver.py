@@ -84,9 +84,12 @@ class Solver:
         }
 
         return headers
+    
+    def __solve_captcha(self, url_1: str, url_2: str) -> dict:
+        # removed from preview
 
     def __get_challenge(self) -> dict:
-      # removed from preview
+        # removed from preview
 
     def __post_captcha(self, solve: dict) -> dict:
         # removed from preview
