@@ -30,7 +30,7 @@ class Solver:
             "tmp": f"{int(time.time())}{random.randint(111, 999)}",
             "platform": "app",
             "webdriver": "false",
-            "verify_host": "https://verification-va.tiktokv.com/",
+            "verify_host": f"https://{self.__host}/",
             "locale": "en",
             "channel": "beta",
             "app_key": "",
