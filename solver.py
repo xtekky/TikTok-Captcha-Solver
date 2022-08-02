@@ -4,12 +4,10 @@ import time
 import random
 
 from urllib.parse import urlencode
-from utils.xgorgon import Gorgon
 from utils.solver import PuzzleSolver
 
 class Solver:
     def __init__(self, did, iid):
-        self.__xgorgon    = Gorgon()
         self.__host       = "verification-va.tiktokv.com"
         self.__device_id  = did 
         self.__install_id = iid 
@@ -55,18 +53,7 @@ class Solver:
 
         return urlencode(params)
 
-    def __headers(
-        self,
-        params : str,
-        payload: (bool or str) = None,
-        cookies: (bool or str) = None
-    ):
-        
-        sign = self.__xgorgon.calculate(
-            url    = params,
-            body   = payload,
-            cookie = cookies,
-        )
+    def __headers(self) -> dict:
 
         headers = {
             "passport-sdk-version": "19",
@@ -77,8 +64,6 @@ class Solver:
             "host": self.__host,
             "connection": "Keep-Alive",
             "user-agent": "okhttp/3.10.0.1",
-            "x-gorgon": sign["X-Gorgon"],
-            "x-khronos": sign["X-Khronos"],
         }
 
         return headers
@@ -94,11 +79,7 @@ class Solver:
                     + "/captcha/get?"
                     + params
             ),
-            headers = self.__headers(
-                params  = params,
-                payload = None,
-                cookies = self.__cookies
-            )
+            headers = self.__headers()
         )
 
         return req.json()
@@ -147,11 +128,7 @@ class Solver:
             ),
         }
 
-        headers = self.__headers(
-            params  = params, 
-            payload = urlencode(body), 
-            cookies = self.__cookies
-        )
+        headers = self.__headers()
 
         req = self.__client.post(
             url = (
