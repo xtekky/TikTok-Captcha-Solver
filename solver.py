@@ -101,7 +101,7 @@ class Solver:
         randlength = round(
             random.random() * (100 - 50) + 50
         )
-        time.sleep(1)
+        time.sleep(1) # don't remove delay or it will fail
         return {
             "maxloc": maxloc,
             "randlenght": randlength
@@ -112,7 +112,7 @@ class Solver:
 
         body = {
             "modified_img_width": 552,
-            "id": solve["id"],  # r.json()["data"]["id"],
+            "id": solve["id"],
             "mode": "slide",
             "reply": list(
                 {
