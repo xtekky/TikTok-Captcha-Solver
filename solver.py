@@ -1,5 +1,3 @@
-# 100€ t.me/xtekky
-
 import requests
 import base64
 import time
@@ -84,15 +82,93 @@ class Solver:
         }
 
         return headers
-    
-    def __solve_captcha(self, url_1: str, url_2: str) -> dict:
-        # removed from preview
 
     def __get_challenge(self) -> dict:
-        # removed from preview
+
+        params = self.__params()
+
+        req = self.__client.get(
+            url = (
+                "https://"
+                    + self.__host
+                    + "/captcha/get?"
+                    + params
+            ),
+            headers = self.__headers(
+                params  = params,
+                payload = None,
+                cookies = self.__cookies
+            )
+        )
+
+        return req.json()
+
+    def __solve_captcha(self, url_1: str, url_2: str) -> dict:
+        puzzle = base64.b64encode(
+            self.__client.get(
+                url_1,
+            ).content
+        )
+        piece = base64.b64encode(
+            self.__client.get(
+                url_2,
+            ).content
+        )
+        
+        solver = PuzzleSolver(puzzle, piece)
+        maxloc = solver.get_position()
+        randlength = round(
+            random.random() * (100 - 50) + 50
+        )
+        time.sleep(1)
+        return {
+            "maxloc": maxloc,
+            "randlenght": randlength
+        }
 
     def __post_captcha(self, solve: dict) -> dict:
-        # removed from preview
+        params = self.__params()
+
+        body = {
+            "modified_img_width": 552,
+            "id": solve["id"],  # r.json()["data"]["id"],
+            "mode": "slide",
+            "reply": list(
+                {
+                    "relative_time": i * solve["randlenght"],
+                    "x": round(
+                        solve["maxloc"] / (solve["randlenght"] / (i + 1))
+                    ),
+                    "y": solve["tip"],
+                }
+                for i in range(
+                    solve["randlenght"]
+                )
+            ),
+        }
+
+        headers = self.__headers(
+            params  = params, 
+            payload = urlencode(body), 
+            cookies = self.__cookies
+        )
+
+        req = self.__client.post(
+            url = (
+                "https://"
+                    + self.__host
+                    + "/captcha/verify?"
+                    + params
+            ),
+            headers = headers.update(
+                    {
+                        "content-type": "application/json"
+                }
+            ),
+            json = body
+        )
+
+        return req.json()
 
     def solve_captcha(self):
         __captcha_challenge = self.__get_challenge()
@@ -115,6 +191,7 @@ class Solver:
         return self.__post_captcha(solve)
 
 
+
 if __name__ == "__main__":
     __device_id = ""
     __install_id = ""
@@ -125,5 +202,3 @@ if __name__ == "__main__":
             iid = __install_id
         ).solve_captcha()
     )
-    
-    # >>> {'code': 200, 'data': None, 'message': 'Verification complete'}
